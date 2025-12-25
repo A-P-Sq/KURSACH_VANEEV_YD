@@ -1,0 +1,32 @@
+﻿<Window x:Class="AutoShopCoursework.ReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Отчёт по продажам" Height="600" Width="950"
+        WindowStartupLocation="CenterOwner" FontFamily="Segoe UI">
+    <Grid Background="#F3F3F3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="ОТЧЁТ ПО ПРОДАННЫМ АВТОМОБИЛЯМ" FontSize="20" FontWeight="Bold" 
+                   Foreground="#2D5A9E" Margin="10" HorizontalAlignment="Center"/>
+
+        <DataGrid x:Name="dgReport" Grid.Row="1" Margin="10" 
+                  AutoGenerateColumns="True" CanUserAddRows="False" IsReadOnly="True"
+                  Background="White" AlternatingRowBackground="#F9F9F9"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="Экспорт в Word" Width="140" Height="35" Cursor="Hand"
+                    Margin="0 0 10 0" Background="#2D5A9E" Foreground="White" Click="BtnExportWord_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button Content="Закрыть" Width="100" Height="35" Click="BtnClose_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -5,7 +5,7 @@
 -- Dumped from database version 16.4
 -- Dumped by pg_dump version 16.4
 
--- Started on 2025-12-25 02:05:50
+-- Started on 2025-12-25 23:33:36
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -38,7 +38,7 @@ COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 --
--- TOC entry 233 (class 1255 OID 25111)
+-- TOC entry 232 (class 1255 OID 25111)
 -- Name: auth_user(character varying, character varying); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -58,7 +58,7 @@ $$;
 ALTER FUNCTION public.auth_user(p_login character varying, p_password character varying) OWNER TO postgres;
 
 --
--- TOC entry 232 (class 1255 OID 25019)
+-- TOC entry 231 (class 1255 OID 25019)
 -- Name: check_car_not_sold(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -77,7 +77,7 @@ $$;
 ALTER FUNCTION public.check_car_not_sold() OWNER TO postgres;
 
 --
--- TOC entry 230 (class 1255 OID 25015)
+-- TOC entry 229 (class 1255 OID 25015)
 -- Name: delete_car(integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -117,19 +117,26 @@ $$;
 ALTER FUNCTION public.get_cars_by_filters(p_brand character varying, p_model character varying, p_year integer) OWNER TO postgres;
 
 --
--- TOC entry 228 (class 1255 OID 25012)
+-- TOC entry 252 (class 1255 OID 25130)
 -- Name: get_sales_with_details(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
-CREATE FUNCTION public.get_sales_with_details() RETURNS TABLE(sale_id integer, car_brand character varying, car_model character varying, client_fullname character varying, sale_date date)
+CREATE FUNCTION public.get_sales_with_details() RETURNS TABLE(sale_id integer, car_brand character varying, car_model character varying, client_fullname character varying, price_sold numeric, sale_date date)
     LANGUAGE plpgsql
     AS $$
 BEGIN
     RETURN QUERY
-    SELECT s.id, c.brand, c.model, cl.fullname, s.sale_date
+    SELECT 
+        s.id AS sale_id, 
+        c.brand AS car_brand, 
+        c.model AS car_model, 
+        cl.fullname AS client_fullname, 
+        s.price_sold, 
+        s.sale_date
     FROM sales s
     JOIN cars c ON s.car_id = c.id
-    JOIN clients cl ON s.client_id = cl.id;
+    JOIN clients cl ON s.client_id = cl.id
+    ORDER BY s.sale_date DESC;
 END;
 $$;
 
@@ -137,7 +144,7 @@ $$;
 ALTER FUNCTION public.get_sales_with_details() OWNER TO postgres;
 
 --
--- TOC entry 229 (class 1255 OID 25013)
+-- TOC entry 228 (class 1255 OID 25013)
 -- Name: insert_car(character varying, character varying, integer, numeric); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -154,7 +161,7 @@ $$;
 ALTER PROCEDURE public.insert_car(IN p_brand character varying, IN p_model character varying, IN p_year integer, IN p_price numeric) OWNER TO postgres;
 
 --
--- TOC entry 245 (class 1255 OID 25126)
+-- TOC entry 244 (class 1255 OID 25126)
 -- Name: log_sale_delete(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -176,7 +183,7 @@ $$;
 ALTER FUNCTION public.log_sale_delete() OWNER TO postgres;
 
 --
--- TOC entry 244 (class 1255 OID 25125)
+-- TOC entry 243 (class 1255 OID 25125)
 -- Name: log_sale_insert(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -198,7 +205,7 @@ $$;
 ALTER FUNCTION public.log_sale_insert() OWNER TO postgres;
 
 --
--- TOC entry 237 (class 1255 OID 25116)
+-- TOC entry 236 (class 1255 OID 25116)
 -- Name: manage_client(text, character varying, character varying, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -219,7 +226,7 @@ $$;
 ALTER PROCEDURE public.manage_client(IN p_oper text, IN p_fullname character varying, IN p_phone character varying, IN p_id integer) OWNER TO postgres;
 
 --
--- TOC entry 234 (class 1255 OID 25112)
+-- TOC entry 233 (class 1255 OID 25112)
 -- Name: manage_client(character varying, character varying, character varying, integer); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -241,7 +248,7 @@ $$;
 ALTER PROCEDURE public.manage_client(IN p_fullname character varying, IN p_phone character varying, IN p_operation character varying, IN p_id integer) OWNER TO postgres;
 
 --
--- TOC entry 231 (class 1255 OID 25016)
+-- TOC entry 230 (class 1255 OID 25016)
 -- Name: register_sale(integer, integer, date); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -261,7 +268,7 @@ $$;
 ALTER PROCEDURE public.register_sale(IN p_car_id integer, IN p_client_id integer, IN p_sale_date date) OWNER TO postgres;
 
 --
--- TOC entry 239 (class 1255 OID 25118)
+-- TOC entry 238 (class 1255 OID 25118)
 -- Name: register_sale(integer, integer, numeric, date); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -280,7 +287,7 @@ $$;
 ALTER PROCEDURE public.register_sale(IN p_car_id integer, IN p_client_id integer, IN p_price_sold numeric, IN p_sale_date date) OWNER TO postgres;
 
 --
--- TOC entry 235 (class 1255 OID 25113)
+-- TOC entry 234 (class 1255 OID 25113)
 -- Name: sync_car_sold_status(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -301,7 +308,7 @@ $$;
 ALTER FUNCTION public.sync_car_sold_status() OWNER TO postgres;
 
 --
--- TOC entry 236 (class 1255 OID 25014)
+-- TOC entry 235 (class 1255 OID 25014)
 -- Name: update_car(integer, character varying, character varying, integer, numeric); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -322,7 +329,7 @@ $$;
 ALTER PROCEDURE public.update_car(IN p_id integer, IN p_brand character varying, IN p_model character varying, IN p_year integer, IN p_price numeric) OWNER TO postgres;
 
 --
--- TOC entry 238 (class 1255 OID 25115)
+-- TOC entry 237 (class 1255 OID 25115)
 -- Name: update_client(integer, character varying, character varying); Type: PROCEDURE; Schema: public; Owner: postgres
 --
 
@@ -641,12 +648,12 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 -- Data for Name: cars; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (8, 'toyota', 'Land cruser 200', 2007, 2000.00, false);
 INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (2, 'BMW', 'X5', 2019, 35000.00, true);
-INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (7, 'Toyota', 'Camry', 2021, 6000000.00, false);
 INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (3, 'Audi', 'A4', 2021, 28000.00, false);
-INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (9, 'Gelly', 'Coolray', 2020, 1.00, false);
 INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (11, 'Toyota ', 'Carola ', 2020, 1231313.00, false);
+INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (7, 'Toyota', 'Camry', 2021, 6000000.00, true);
+INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (8, 'toyota', 'Land cruser 200', 2007, 2000.00, true);
+INSERT INTO public.cars (id, brand, model, year, price, is_sold) VALUES (9, 'Gelly', 'Coolray', 2020, 1.00, false);
 
 
 --
@@ -675,6 +682,8 @@ INSERT INTO public.roles (id, name) VALUES (2, 'manager');
 -- Data for Name: sales; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
+INSERT INTO public.sales (id, car_id, client_id, sale_date, price_sold) VALUES (18, 7, 1, '2025-12-25', 6000000.00);
+INSERT INTO public.sales (id, car_id, client_id, sale_date, price_sold) VALUES (19, 8, 1, '2025-12-25', 2000.00);
 
 
 --
@@ -695,6 +704,12 @@ INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (26, 14, '20
 INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (27, 15, '2025-12-25 00:14:18.964483', 'Продажа отменена. Автомобиль ID: 7, Клиент ID: 2');
 INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (28, 17, '2025-12-25 00:14:20.623242', 'Продажа отменена. Автомобиль ID: 3, Клиент ID: 2');
 INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (29, 16, '2025-12-25 00:14:21.959642', 'Продажа отменена. Автомобиль ID: 9, Клиент ID: 2');
+INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (30, 18, '2025-12-25 02:15:22.4185', 'Создана новая продажа. Автомобиль ID: 7, Клиент ID: 1');
+INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (31, 19, '2025-12-25 22:33:11.713267', 'Создана новая продажа. Автомобиль ID: 8, Клиент ID: 1');
+INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (32, 20, '2025-12-25 23:12:43.355879', 'Создана новая продажа. Автомобиль ID: 9, Клиент ID: 2');
+INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (33, 20, '2025-12-25 23:12:56.71598', 'Продажа отменена. Автомобиль ID: 9, Клиент ID: 2');
+INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (34, 21, '2025-12-25 23:13:02.771966', 'Создана новая продажа. Автомобиль ID: 9, Клиент ID: 1');
+INSERT INTO public.sales_log (id, sale_id, log_date, action) VALUES (35, 21, '2025-12-25 23:13:07.303337', 'Продажа отменена. Автомобиль ID: 9, Клиент ID: 1');
 
 
 --
@@ -714,7 +729,7 @@ INSERT INTO public.users (id, login, password, role_id) VALUES (4, 'adm', '456',
 -- Name: cars_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cars_id_seq', 11, true);
+SELECT pg_catalog.setval('public.cars_id_seq', 13, true);
 
 
 --
@@ -741,7 +756,7 @@ SELECT pg_catalog.setval('public.roles_id_seq', 2, true);
 -- Name: sales_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.sales_id_seq', 17, true);
+SELECT pg_catalog.setval('public.sales_id_seq', 21, true);
 
 
 --
@@ -750,7 +765,7 @@ SELECT pg_catalog.setval('public.sales_id_seq', 17, true);
 -- Name: sales_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.sales_log_id_seq', 29, true);
+SELECT pg_catalog.setval('public.sales_log_id_seq', 35, true);
 
 
 --
@@ -893,7 +908,7 @@ ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_role_id_fkey FOREIGN KEY (role_id) REFERENCES public.roles(id) ON DELETE CASCADE;
 
 
--- Completed on 2025-12-25 02:05:50
+-- Completed on 2025-12-25 23:33:36
 
 --
 -- PostgreSQL database dump complete
